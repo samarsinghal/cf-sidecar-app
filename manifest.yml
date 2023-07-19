@@ -1,0 +1,13 @@
+---
+applications:
+  - name: cf-sidecar-app
+    instances: 2
+    buildpacks:
+      - binary_buildpack
+    processes:
+      - type: web
+        command: while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; echo -e "Hello from Server!"; } | nc -q 1 -l 8080; done
+    sidecars:
+      - name: sidecar
+        process_types: [ 'web' ]
+        command: while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; echo -e "Sidecar says '$(curl localhost:8080)'"; } | nc -q 1 -l 8081; done
